@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07111f">
+
+<title>ScorePredict ⚽</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:
+    radial-gradient(circle at 50% -10%,#1d466f 0%,#07111f 48%);
+    color:#fff;
+}
+
+.container{
+    width:100%;
+    max-width:760px;
+    margin:auto;
+    padding:20px 15px 40px;
+}
+
+/* HEADER */
+
+.header{
+    text-align:center;
+    padding:20px 0 25px;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 11px;
+    border-radius:30px;
+    background:#173b3a;
+    color:#83e8d5;
+    font-size:11px;
+    font-weight:800;
+}
+
+.header h1{
+    font-size:32px;
+    margin-top:10px;
+}
+
+.header p{
+    color:#9fb0c5;
+    margin-top:7px;
+    font-size:14px;
+}
+
+/* CARD */
+
+.card{
+    background:rgba(13,27,45,.96);
+    border:1px solid #203650;
+    border-radius:22px;
+    padding:18px;
+    margin-bottom:15px;
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+
+/* INPUTS */
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+label{
+    display:block;
+    font-size:14px;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #203650;
+    background:#081522;
+    color:#fff;
+    outline:none;
+    font-size:16px;
+}
+
+input:focus{
+    border-color:#55d6be;
+}
+
+/* BUTTONS */
+
+button{
+    width:100%;
+    border:none;
+    border-radius:14px;
+    padding:15px;
+    margin-top:14px;
+    background:#55d6be;
+    color:#04100e;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+button.secondary{
+    background:#11243a;
+    color:#fff;
+    border:1px solid #203650;
+}
+
+/* STATUS */
+
+.status{
+    display:none;
+    margin-top:12px;
+    padding:12px;
+    border-radius:13px;
+    background:#091726;
+    color:#9fb0c5;
+    font-size:14px;
+}
+
+.status.show{
+    display:block;
+}
+
+.status.error{
+    color:#ffb3bb;
+    border:1px solid #5d2832;
+}
+
+.hint{
+    color:#7f93aa;
+    font-size:12px;
+    line-height:1.5;
+    margin-top:11px;
+}
+
+/* RESULT */
+
+.result{
+    display:none;
+}
+
+.result.show{
+    display:block;
+}
+
+.match{
+    text-align:center;
+}
+
+.teams{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+}
+
+.team{
+    width:125px;
+    text-align:center;
+}
+
+.logo{
+    width:82px;
+    height:82px;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 10px;
+    padding:9px;
+    background:#091726;
+    border:1px solid #203650;
+    border-radius:50%;
+}
+
+.team-name{
+    font-size:15px;
+    font-weight:800;
+    line-height:1.3;
+}
+
+.vs{
+    color:#71869e;
+    font-size:13px;
+    font-weight:900;
+}
+
+.score{
+    font-size:50px;
+    font-weight:900;
+    margin-top:18px;
+}
+
+.winner{
+    color:#55d6be;
+    font-weight:800;
+    margin:4px 0 20px;
+}
+
+/* PROBABILITES */
+
+.probabilities{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+
+.pill{
+    background:#091726;
+    border:1px solid #203650;
+    border-radius:13px;
+    padding:12px 7px;
+    text-align:center;
+}
+
+.pill b{
+    display:block;
+    font-size:19px;
+}
+
+.pill span{
+    color:#8fa2b8;
+    font-size:10px;
+}
+
+/* BARS */
+
+.bars{
+    margin-top:18px;
+}
+
+.bar-row{
+    margin:13px 0;
+}
+
+.bar-head{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.bar{
+    width:100%;
+    height:8px;
+    background:#07111f;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.fill{
+    width:0%;
+    height:100%;
+    background:#55d6be;
+    border-radius:20px;
+    transition:width .8s ease;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin-top:16px;
+}
+
+.stat{
+    background:#091726;
+    border:1px solid #203650;
+    border-radius:14px;
+    padding:13px;
+}
+
+.stat small{
+    display:block;
+    color:#8fa2b8;
+    margin-bottom:5px;
+}
+
+.stat b{
+    font-size:15px;
+}
+
+/* FOOTER */
+
+footer{
+    text-align:center;
+    color:#687b92;
+    font-size:12px;
+    margin-top:18px;
+}
+
+@media(max-width:560px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .teams{
+        gap:7px;
+    }
+
+    .team{
+        width:105px;
+    }
+
+    .logo{
+        width:70px;
+        height:70px;
+    }
+
+    .score{
+        font-size:44px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <span class="badge">
+        FOOTBALL ANALYZER
+    </span>
+
+    <h1>
+        ScorePredict ⚽
+    </h1>
+
+    <p>
+        Analyse un match et estime le score final.
+    </p>
+
+</header>
+
+
+<!-- RECHERCHE -->
+
+<section class="card">
+
+    <div class="grid">
+
+        <div>
+
+            <label>
+                Équipe à domicile
+            </label>
+
+            <input
+                id="home"
+                type="text"
+                placeholder="Ex. Real Madrid"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div>
+
+            <label>
+                Équipe à l'extérieur
+            </label>
+
+            <input
+                id="away"
+                type="text"
+                placeholder="Ex. Barcelona"
+                autocomplete="off"
+            >
+
+        </div>
+
+    </div>
+
+
+    <div style="margin-top:12px">
+
+        <label>
+            Date du match
+        </label>
+
+        <input
+            id="date"
+            type="date"
+        >
+
+    </div>
+
+
+    <button id="analyze">
+
+        🔮 ANALYSER LE MATCH
+
+    </button>
+
+
+    <button
+        id="demo"
+        class="secondary"
+    >
+
+        🧪 ESSAYER UN EXEMPLE
+
+    </button>
+
+
+    <div
+        id="status"
+        class="status"
+    ></div>
+
+
+    <div class="hint">
+
+        Les données réelles seront récupérées
+        depuis l'API lorsque nous connecterons
+        le serveur Netlify.
+
+    </div>
+
+</section>
+
+
+<!-- RESULTAT -->
+
+<section
+    id="result"
+    class="card result"
+>
+
+    <div class="match">
+
+        <div class="teams">
+
+
+            <!-- EQUIPE DOMICILE -->
+
+            <div class="team">
+
+                <img
+                    id="homeLogo"
+                    class="logo"
+                    alt="Logo équipe domicile"
+                >
+
+                <div
+                    id="homeName"
+                    class="team-name"
+                >
+                    Équipe domicile
+                </div>
+
+            </div>
+
+
+            <div class="vs">
+
+                VS
+
+            </div>
+
+
+            <!-- EQUIPE EXTERIEURE -->
+
+            <div class="team">
+
+                <img
+                    id="awayLogo"
+                    class="logo"
+                    alt="Logo équipe extérieure"
+                >
+
+                <div
+                    id="awayName"
+                    class="team-name"
+                >
+                    Équipe extérieure
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SCORE -->
+
+        <div
+            id="predScore"
+            class="score"
+        >
+
+            - — -
+
+        </div>
+
+
+        <div
+            id="winner"
+            class="winner"
+        >
+
+            Pronostic
+
+        </div>
+
+    </div>
+
+
+    <!-- PROBABILITES -->
+
+    <div class="probabilities">
+
+
+        <div class="pill">
+
+            <b id="pHome">
+                -
+            </b>
+
+            <span>
+                DOMICILE
+            </span>
+
+        </div>
+
+
+        <div class="pill">
+
+            <b id="pDraw">
+                -
+            </b>
+
+            <span>
+                NUL
+            </span>
+
+        </div>
+
+
+        <div class="pill">
+
+            <b id="pAway">
+                -
+            </b>
+
+            <span>
+                EXTÉRIEUR
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- BARRES -->
+
+    <div class="bars">
+
+
+        <div class="bar-row">
+
+            <div class="bar-head">
+
+                <span>
+                    Probabilité domicile
+                </span>
+
+                <b id="bh">
+                    0%
+                </b>
+
+            </div>
+
+            <div class="bar">
+
+                <div
+                    id="fh"
+                    class="fill"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-row">
+
+            <div class="bar-head">
+
+                <span>
+                    Probabilité nul
+                </span>
+
+                <b id="bd">
+                    0%
+                </b>
+
+            </div>
+
+            <div class="bar">
+
+                <div
+                    id="fd"
+                    class="fill"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="bar-row">
+
+            <div class="bar-head">
+
+                <span>
+                    Probabilité extérieur
+                </span>
+
+                <b id="ba">
+                    0%
+                </b>
+
+            </div>
+
+            <div class="bar">
+
+                <div
+                    id="fa"
+                    class="fill"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATISTIQUES -->
+
+    <div class="stats">
+
+
+        <div class="stat">
+
+            <small>
+                Forme domicile
+            </small>
+
+            <b id="formH">
+                -
+            </b>
+
+        </div>
+
+
+        <div class="stat">
+
+            <small>
+                Forme extérieur
+            </small>
+
+            <b id="formA">
+                -
+            </b>
+
+        </div>
+
+
+        <div class="stat">
+
+            <small>
+                Conseil
+            </small>
+
+            <b id="advice">
+                -
+            </b>
+
+        </div>
+
+
+        <div class="stat">
+
+            <small>
+                Confiance
+            </small>
+
+            <b id="confidence">
+                -
+            </b>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    ⚠️ Les prédictions sont des estimations
+    statistiques et ne garantissent pas le résultat.
+
+</footer>
+
+</div>
+
+
+<script>
+
+/* =========================
+   OUTILS
+========================= */
+
+const $ = id =>
+    document.getElementById(id);
+
+
+function showStatus(message,error=false){
+
+    const status =
+        $("status");
+
+    status.textContent =
+        message;
+
+    status.className =
+        "status show" +
+        (error ? " error" : "");
+
+}
+
+
+function percentage(value){
+
+    if(
+        value === null ||
+        value === undefined ||
+        value === ""
+    ){
+        return null;
+    }
+
+    const number =
+        parseFloat(
+            String(value)
+            .replace("%","")
+        );
+
+    return Number.isFinite(number)
+        ? number
+        : null;
+}
+
+
+/* =========================
+   LOGOS
+========================= */
+
+function setLogo(
+    elementId,
+    url,
+    teamName
+){
+
+    const img =
+        $(elementId);
+
+    if(url){
+
+        img.src =
+            url;
+
+    }
+
+    img.alt =
+        "Logo " + teamName;
+}
+
+
+/* =========================
+   AFFICHAGE RESULTAT
+========================= */
+
+function render(data){
+
+    $("result")
+        .classList
+        .add("show");
+
+
+    $("homeName")
+        .textContent =
+        data.home;
+
+
+    $("awayName")
+        .textContent =
+        data.away;
+
+
+    setLogo(
+        "homeLogo",
+        data.homeLogo,
+        data.home
+    );
+
+
+    setLogo(
+        "awayLogo",
+        data.awayLogo,
+        data.away
+    );
+
+
+    $("predScore")
+        .textContent =
+        (data.scoreHome ?? "?")
+        +
+        " — "
+        +
+        (data.scoreAway ?? "?");
+
+
+    $("winner")
+        .textContent =
+        data.winner
+        ?
+        "🏆 " + data.winner
+        :
+        "Pronostic disponible";
+
+
+    const home =
+        percentage(
+            data.probabilities.home
+        );
+
+
+    const draw =
+        percentage(
+            data.probabilities.draw
+        );
+
+
+    const away =
+        percentage(
+            data.probabilities.away
+        );
+
+
+    if(home !== null){
+
+        $("pHome")
+            .textContent =
+            Math.round(home) + "%";
+
+        $("bh")
+            .textContent =
+            Math.round(home) + "%";
+
+        $("fh")
+            .style.width =
+            Math.min(100,home) + "%";
+
+    }
+
+
+    if(draw !== null){
+
+        $("pDraw")
+            .textContent =
+            Math.round(draw) + "%";
+
+        $("bd")
+            .textContent =
+            Math.round(draw) + "%";
+
+        $("fd")
+            .style.width =
+            Math.min(100,draw) + "%";
+
+    }
+
+
+    if(away !== null){
+
+        $("pAway")
+            .textContent =
+            Math.round(away) + "%";
+
+        $("ba")
+            .textContent =
+            Math.round(away) + "%";
+
+        $("fa")
+            .style.width =
+            Math.min(100,away) + "%";
+
+    }
+
+
+    $("formH")
+        .textContent =
+        data.formHome || "-";
+
+
+    $("formA")
+        .textContent =
+        data.formAway || "-";
+
+
+    $("advice")
+        .textContent =
+        data.advice || "-";
+
+
+    $("confidence")
+        .textContent =
+        data.confidence || "-";
+
+}
+
+
+/* =========================
+   ANALYSE
+========================= */
+
+$("analyze")
+.onclick =
+async function(){
+
+    const home =
+        $("home")
+        .value
+        .trim();
+
+
+    const away =
+        $("away")
+        .value
+        .trim();
+
+
+    const date =
+        $("date")
+        .value;
+
+
+    $("result")
+        .classList
+        .remove("show");
+
+
+    if(
+        !home ||
+        !away ||
+        !date
+    ){
+
+        showStatus(
+            "Remplis les deux équipes et la date.",
+            true
+        );
+
+        return;
+    }
+
+
+    showStatus(
+        "🔎 Recherche du match et analyse en cours..."
+    );
+
+
+    /*
+       La prochaine étape utilisera cette route :
+
+       /.netlify/functions/analyze
+
+       Elle permettra de récupérer :
+       - nom des équipes
+       - logos
+       - prédiction
+       - probabilités
+       - forme
+    */
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/.netlify/functions/analyze",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        home:home,
+
+                        away:away,
+
+                        date:date
+
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.error ||
+                "Impossible d'analyser le match."
+            );
+
+        }
+
+
+        $("status")
+            .className =
+            "status";
+
+
+        render(data);
+
+
+    }catch(error){
+
+        showStatus(
+            error.message ||
+            "Erreur de connexion au serveur.",
+            true
+        );
+
+    }
+
+};
+
+
+/* =========================
+   MODE DEMO
+========================= */
+
+$("demo")
+.onclick =
+function(){
+
+    $("home")
+        .value =
+        "Real Madrid";
+
+
+    $("away")
+        .value =
+        "Barcelona";
+
+
+    const tomorrow =
+        new Date();
+
+
+    tomorrow.setDate(
+        tomorrow.getDate()+1
+    );
+
+
+    $("date")
+        .value =
+        tomorrow
+        .toISOString()
+        .slice(0,10);
+
+
+    /*
+       Démonstration visuelle.
+       Aucun faux résultat n'est envoyé
+       comme une vraie prédiction.
+    */
+
+    render({
+
+        home:"Real Madrid",
+
+        away:"Barcelona",
+
+        homeLogo:
+        "https://media.api-sports.io/football/teams/541.png",
+
+        awayLogo:
+        "https://media.api-sports.io/football/teams/529.png",
+
+        scoreHome:2,
+
+        scoreAway:1,
+
+        winner:"Real Madrid",
+
+        probabilities:{
+
+            home:52,
+
+            draw:25,
+
+            away:23
+
+        },
+
+        formHome:"WWDWW",
+
+        formAway:"WDWDL",
+
+        advice:"Real Madrid favori",
+
+        confidence:"52%"
+
+    });
+
+
+    showStatus(
+        "🧪 Exemple chargé. Ceci est une démonstration."
+    );
+
+};
+
+</script>
+
+</body>
+</html>
