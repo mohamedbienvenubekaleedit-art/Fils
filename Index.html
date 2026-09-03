@@ -1,1167 +1,799 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#07111f">
-
-<title>ScorePredict ⚽</title>
-
-<style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-}
-
-body{
-    min-height:100vh;
-    background:
-    radial-gradient(circle at 50% -10%,#1d466f 0%,#07111f 48%);
-    color:#fff;
-}
-
-.container{
-    width:100%;
-    max-width:760px;
-    margin:auto;
-    padding:20px 15px 40px;
-}
-
-/* HEADER */
-
-.header{
-    text-align:center;
-    padding:20px 0 25px;
-}
-
-.badge{
-    display:inline-block;
-    padding:6px 11px;
-    border-radius:30px;
-    background:#173b3a;
-    color:#83e8d5;
-    font-size:11px;
-    font-weight:800;
-}
-
-.header h1{
-    font-size:32px;
-    margin-top:10px;
-}
-
-.header p{
-    color:#9fb0c5;
-    margin-top:7px;
-    font-size:14px;
-}
-
-/* CARD */
-
-.card{
-    background:rgba(13,27,45,.96);
-    border:1px solid #203650;
-    border-radius:22px;
-    padding:18px;
-    margin-bottom:15px;
-    box-shadow:0 15px 40px rgba(0,0,0,.25);
-}
-
-/* INPUTS */
-
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-}
-
-label{
-    display:block;
-    font-size:14px;
-    font-weight:700;
-    margin-bottom:7px;
-}
-
-input{
-    width:100%;
-    padding:14px;
-    border-radius:14px;
-    border:1px solid #203650;
-    background:#081522;
-    color:#fff;
-    outline:none;
-    font-size:16px;
-}
-
-input:focus{
-    border-color:#55d6be;
-}
-
-/* BUTTONS */
-
-button{
-    width:100%;
-    border:none;
-    border-radius:14px;
-    padding:15px;
-    margin-top:14px;
-    background:#55d6be;
-    color:#04100e;
-    font-size:16px;
-    font-weight:800;
-    cursor:pointer;
-}
-
-button:active{
-    transform:scale(.98);
-}
-
-button.secondary{
-    background:#11243a;
-    color:#fff;
-    border:1px solid #203650;
-}
-
-/* STATUS */
-
-.status{
-    display:none;
-    margin-top:12px;
-    padding:12px;
-    border-radius:13px;
-    background:#091726;
-    color:#9fb0c5;
-    font-size:14px;
-}
-
-.status.show{
-    display:block;
-}
-
-.status.error{
-    color:#ffb3bb;
-    border:1px solid #5d2832;
-}
-
-.hint{
-    color:#7f93aa;
-    font-size:12px;
-    line-height:1.5;
-    margin-top:11px;
-}
-
-/* RESULT */
-
-.result{
-    display:none;
-}
-
-.result.show{
-    display:block;
-}
-
-.match{
-    text-align:center;
-}
-
-.teams{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:20px;
-}
-
-.team{
-    width:125px;
-    text-align:center;
-}
-
-.logo{
-    width:82px;
-    height:82px;
-    object-fit:contain;
-    display:block;
-    margin:0 auto 10px;
-    padding:9px;
-    background:#091726;
-    border:1px solid #203650;
-    border-radius:50%;
-}
-
-.team-name{
-    font-size:15px;
-    font-weight:800;
-    line-height:1.3;
-}
-
-.vs{
-    color:#71869e;
-    font-size:13px;
-    font-weight:900;
-}
-
-.score{
-    font-size:50px;
-    font-weight:900;
-    margin-top:18px;
-}
-
-.winner{
-    color:#55d6be;
-    font-weight:800;
-    margin:4px 0 20px;
-}
-
-/* PROBABILITES */
-
-.probabilities{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
-}
-
-.pill{
-    background:#091726;
-    border:1px solid #203650;
-    border-radius:13px;
-    padding:12px 7px;
-    text-align:center;
-}
-
-.pill b{
-    display:block;
-    font-size:19px;
-}
-
-.pill span{
-    color:#8fa2b8;
-    font-size:10px;
-}
-
-/* BARS */
-
-.bars{
-    margin-top:18px;
-}
-
-.bar-row{
-    margin:13px 0;
-}
-
-.bar-head{
-    display:flex;
-    justify-content:space-between;
-    font-size:13px;
-    margin-bottom:6px;
-}
-
-.bar{
-    width:100%;
-    height:8px;
-    background:#07111f;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.fill{
-    width:0%;
-    height:100%;
-    background:#55d6be;
-    border-radius:20px;
-    transition:width .8s ease;
-}
-
-/* STATS */
-
-.stats{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:9px;
-    margin-top:16px;
-}
-
-.stat{
-    background:#091726;
-    border:1px solid #203650;
-    border-radius:14px;
-    padding:13px;
-}
-
-.stat small{
-    display:block;
-    color:#8fa2b8;
-    margin-bottom:5px;
-}
-
-.stat b{
-    font-size:15px;
-}
-
-/* FOOTER */
-
-footer{
-    text-align:center;
-    color:#687b92;
-    font-size:12px;
-    margin-top:18px;
-}
-
-@media(max-width:560px){
-
-    .grid{
-        grid-template-columns:1fr;
-    }
-
-    .teams{
-        gap:7px;
-    }
-
-    .team{
-        width:105px;
-    }
-
-    .logo{
-        width:70px;
-        height:70px;
-    }
-
-    .score{
-        font-size:44px;
-    }
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<!-- HEADER -->
-
-<header class="header">
-
-    <span class="badge">
-        FOOTBALL ANALYZER
-    </span>
-
-    <h1>
-        ScorePredict ⚽
-    </h1>
-
-    <p>
-        Analyse un match et estime le score final.
-    </p>
-
-</header>
-
-
-<!-- RECHERCHE -->
-
-<section class="card">
-
-    <div class="grid">
-
-        <div>
-
-            <label>
-                Équipe à domicile
-            </label>
-
-            <input
-                id="home"
-                type="text"
-                placeholder="Ex. Real Madrid"
-                autocomplete="off"
-            >
-
-        </div>
-
-
-        <div>
-
-            <label>
-                Équipe à l'extérieur
-            </label>
-
-            <input
-                id="away"
-                type="text"
-                placeholder="Ex. Barcelona"
-                autocomplete="off"
-            >
-
-        </div>
-
-    </div>
-
-
-    <div style="margin-top:12px">
-
-        <label>
-            Date du match
-        </label>
-
-        <input
-            id="date"
-            type="date"
-        >
-
-    </div>
-
-
-    <button id="analyze">
-
-        🔮 ANALYSER LE MATCH
-
-    </button>
-
-
-    <button
-        id="demo"
-        class="secondary"
-    >
-
-        🧪 ESSAYER UN EXEMPLE
-
-    </button>
-
-
-    <div
-        id="status"
-        class="status"
-    ></div>
-
-
-    <div class="hint">
-
-        Les données réelles seront récupérées
-        depuis l'API lorsque nous connecterons
-        le serveur Netlify.
-
-    </div>
-
-</section>
-
-
-<!-- RESULTAT -->
-
-<section
-    id="result"
-    class="card result"
->
-
-    <div class="match">
-
-        <div class="teams">
-
-
-            <!-- EQUIPE DOMICILE -->
-
-            <div class="team">
-
-                <img
-                    id="homeLogo"
-                    class="logo"
-                    alt="Logo équipe domicile"
-                >
-
-                <div
-                    id="homeName"
-                    class="team-name"
-                >
-                    Équipe domicile
-                </div>
-
-            </div>
-
-
-            <div class="vs">
-
-                VS
-
-            </div>
-
-
-            <!-- EQUIPE EXTERIEURE -->
-
-            <div class="team">
-
-                <img
-                    id="awayLogo"
-                    class="logo"
-                    alt="Logo équipe extérieure"
-                >
-
-                <div
-                    id="awayName"
-                    class="team-name"
-                >
-                    Équipe extérieure
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- SCORE -->
-
-        <div
-            id="predScore"
-            class="score"
-        >
-
-            - — -
-
-        </div>
-
-
-        <div
-            id="winner"
-            class="winner"
-        >
-
-            Pronostic
-
-        </div>
-
-    </div>
-
-
-    <!-- PROBABILITES -->
-
-    <div class="probabilities">
-
-
-        <div class="pill">
-
-            <b id="pHome">
-                -
-            </b>
-
-            <span>
-                DOMICILE
-            </span>
-
-        </div>
-
-
-        <div class="pill">
-
-            <b id="pDraw">
-                -
-            </b>
-
-            <span>
-                NUL
-            </span>
-
-        </div>
-
-
-        <div class="pill">
-
-            <b id="pAway">
-                -
-            </b>
-
-            <span>
-                EXTÉRIEUR
-            </span>
-
-        </div>
-
-
-    </div>
-
-
-    <!-- BARRES -->
-
-    <div class="bars">
-
-
-        <div class="bar-row">
-
-            <div class="bar-head">
-
-                <span>
-                    Probabilité domicile
-                </span>
-
-                <b id="bh">
-                    0%
-                </b>
-
-            </div>
-
-            <div class="bar">
-
-                <div
-                    id="fh"
-                    class="fill"
-                ></div>
-
-            </div>
-
-        </div>
-
-
-        <div class="bar-row">
-
-            <div class="bar-head">
-
-                <span>
-                    Probabilité nul
-                </span>
-
-                <b id="bd">
-                    0%
-                </b>
-
-            </div>
-
-            <div class="bar">
-
-                <div
-                    id="fd"
-                    class="fill"
-                ></div>
-
-            </div>
-
-        </div>
-
-
-        <div class="bar-row">
-
-            <div class="bar-head">
-
-                <span>
-                    Probabilité extérieur
-                </span>
-
-                <b id="ba">
-                    0%
-                </b>
-
-            </div>
-
-            <div class="bar">
-
-                <div
-                    id="fa"
-                    class="fill"
-                ></div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- STATISTIQUES -->
-
-    <div class="stats">
-
-
-        <div class="stat">
-
-            <small>
-                Forme domicile
-            </small>
-
-            <b id="formH">
-                -
-            </b>
-
-        </div>
-
-
-        <div class="stat">
-
-            <small>
-                Forme extérieur
-            </small>
-
-            <b id="formA">
-                -
-            </b>
-
-        </div>
-
-
-        <div class="stat">
-
-            <small>
-                Conseil
-            </small>
-
-            <b id="advice">
-                -
-            </b>
-
-        </div>
-
-
-        <div class="stat">
-
-            <small>
-                Confiance
-            </small>
-
-            <b id="confidence">
-                -
-            </b>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-<footer>
-
-    ⚠️ Les prédictions sont des estimations
-    statistiques et ne garantissent pas le résultat.
-
-</footer>
-
-</div>
-
-
-<script>
-
-/* =========================
-   OUTILS
-========================= */
-
-const $ = id =>
-    document.getElementById(id);
-
-
-function showStatus(message,error=false){
-
-    const status =
-        $("status");
-
-    status.textContent =
-        message;
-
-    status.className =
-        "status show" +
-        (error ? " error" : "");
-
-}
-
-
-function percentage(value){
-
-    if(
-        value === null ||
-        value === undefined ||
-        value === ""
-    ){
-        return null;
-    }
-
-    const number =
-        parseFloat(
-            String(value)
-            .replace("%","")
-        );
-
-    return Number.isFinite(number)
-        ? number
-        : null;
-}
-
-
-/* =========================
-   LOGOS
-========================= */
-
-function setLogo(
-    elementId,
-    url,
-    teamName
-){
-
-    const img =
-        $(elementId);
-
-    if(url){
-
-        img.src =
-            url;
-
-    }
-
-    img.alt =
-        "Logo " + teamName;
-}
-
-
-/* =========================
-   AFFICHAGE RESULTAT
-========================= */
-
-function render(data){
-
-    $("result")
-        .classList
-        .add("show");
-
-
-    $("homeName")
-        .textContent =
-        data.home;
-
-
-    $("awayName")
-        .textContent =
-        data.away;
-
-
-    setLogo(
-        "homeLogo",
-        data.homeLogo,
-        data.home
-    );
-
-
-    setLogo(
-        "awayLogo",
-        data.awayLogo,
-        data.away
-    );
-
-
-    $("predScore")
-        .textContent =
-        (data.scoreHome ?? "?")
-        +
-        " — "
-        +
-        (data.scoreAway ?? "?");
-
-
-    $("winner")
-        .textContent =
-        data.winner
-        ?
-        "🏆 " + data.winner
-        :
-        "Pronostic disponible";
-
-
-    const home =
-        percentage(
-            data.probabilities.home
-        );
-
-
-    const draw =
-        percentage(
-            data.probabilities.draw
-        );
-
-
-    const away =
-        percentage(
-            data.probabilities.away
-        );
-
-
-    if(home !== null){
-
-        $("pHome")
-            .textContent =
-            Math.round(home) + "%";
-
-        $("bh")
-            .textContent =
-            Math.round(home) + "%";
-
-        $("fh")
-            .style.width =
-            Math.min(100,home) + "%";
-
-    }
-
-
-    if(draw !== null){
-
-        $("pDraw")
-            .textContent =
-            Math.round(draw) + "%";
-
-        $("bd")
-            .textContent =
-            Math.round(draw) + "%";
-
-        $("fd")
-            .style.width =
-            Math.min(100,draw) + "%";
-
-    }
-
-
-    if(away !== null){
-
-        $("pAway")
-            .textContent =
-            Math.round(away) + "%";
-
-        $("ba")
-            .textContent =
-            Math.round(away) + "%";
-
-        $("fa")
-            .style.width =
-            Math.min(100,away) + "%";
-
-    }
-
-
-    $("formH")
-        .textContent =
-        data.formHome || "-";
-
-
-    $("formA")
-        .textContent =
-        data.formAway || "-";
-
-
-    $("advice")
-        .textContent =
-        data.advice || "-";
-
-
-    $("confidence")
-        .textContent =
-        data.confidence || "-";
-
-}
-
-
-/* =========================
-   ANALYSE
-========================= */
-
-$("analyze")
-.onclick =
-async function(){
-
-    const home =
-        $("home")
-        .value
-        .trim();
-
-
-    const away =
-        $("away")
-        .value
-        .trim();
-
-
-    const date =
-        $("date")
-        .value;
-
-
-    $("result")
-        .classList
-        .remove("show");
-
-
-    if(
-        !home ||
-        !away ||
-        !date
-    ){
-
-        showStatus(
-            "Remplis les deux équipes et la date.",
-            true
-        );
-
-        return;
-    }
-
-
-    showStatus(
-        "🔎 Recherche du match et analyse en cours..."
-    );
-
-
-    /*
-       La prochaine étape utilisera cette route :
-
-       /.netlify/functions/analyze
-
-       Elle permettra de récupérer :
-       - nom des équipes
-       - logos
-       - prédiction
-       - probabilités
-       - forme
-    */
-
-
-    try{
-
-        const response =
-            await fetch(
-                "/.netlify/functions/analyze",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                        "application/json"
-                    },
-
-                    body:JSON.stringify({
-
-                        home:home,
-
-                        away:away,
-
-                        date:date
-
-                    })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if(!response.ok){
-
-            throw new Error(
-                data.error ||
-                "Impossible d'analyser le match."
-            );
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Discord</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo%20app.jpg">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Discord">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --blue: #2563eb;
+            --blue-light: #60a5fa;
+            --blue-dark: #1e3a8a;
+            --blue-mid: #1e40af;
+            --bg: #000000;
+            --card-bg: rgba(14, 14, 14, 0.95);
+            --border: rgba(37, 99, 235, 0.35);
+            --text: #f3f4f6;
+            --muted: #9ca3af;
+            --dim: #6b7280;
+            --item-bg: rgba(0,0,0,0.55);
+            --item-border: rgba(37,99,235,0.25);
         }
 
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
 
-        $("status")
-            .className =
-            "status";
+        /* ── BACKGROUND ── */
+        .animated-bg {
+            position: fixed; inset: 0; z-index: 0; overflow: hidden;
+        }
+        #neuralCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .neural-title {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(28px, 10vw, 80px);
+            font-weight: 900; color: rgba(37,99,235,0.12);
+            letter-spacing: 10px; text-transform: uppercase;
+            pointer-events: none; white-space: nowrap;
+            animation: bgPulse 4s ease-in-out infinite;
+        }
+        @keyframes bgPulse {
+            0%,100% { opacity: 0.12; transform: translate(-50%,-50%) scale(1); }
+            50%      { opacity: 0.2;  transform: translate(-50%,-50%) scale(1.02); }
+        }
 
+        /* ── LOADING ── */
+        #loadingScreen {
+            position: fixed; inset: 0; background: #000;
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.5s;
+        }
+        #loadingScreen.fade-out { opacity: 0; pointer-events: none; }
+        
+        /* Modificado: Apenas a imagem redonda, sem borda e sem fundo */
+        .loader-logo {
+            width: 110px; height: 110px;
+            animation: loaderPulse 1.8s ease-in-out infinite;
+            border-radius: 50%; /* Deixa redondo */
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; /* Corta o que sobrar da imagem */
+        }
+        .loader-logo img { 
+            width: 100%; height: 100%; 
+            object-fit: cover; /* Faz a imagem preencher todo o círculo */
+        }
+        
+        @keyframes loaderPulse {
+            0%,100% { transform: scale(0.94); filter: drop-shadow(0 0 8px rgba(37,99,235,0.4)); }
+            50%      { transform: scale(1.06); filter: drop-shadow(0 0 28px rgba(37,99,235,0.8)); }
+        }
 
-        render(data);
+        /* ── TOAST ── */
+        #toast {
+            position: fixed; top: 16px; left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: rgba(10,10,10,0.97);
+            border-radius: 14px; padding: 11px 20px;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 9998; min-width: 240px; max-width: 88vw;
+            transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            border: 1px solid var(--blue);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+        #toast.success { border-color: #10b981; }
+        #toast.error   { border-color: #ef4444; }
+        #toast.loading { border-color: var(--blue-light); }
+        .toast-icon {
+            width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; flex-shrink: 0;
+        }
+        #toast.success .toast-icon { background: #10b981; color: #fff; }
+        #toast.error   .toast-icon { background: #ef4444; color: #fff; }
+        #toast.loading .toast-icon { background: var(--blue); color: #fff; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .toast-msg { font-size: 13px; font-weight: 500; color: var(--text); }
 
+        /* ── LAYOUT ── */
+        .container {
+            position: relative; z-index: 2;
+            min-height: 100dvh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px;
+        }
 
-    }catch(error){
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            border-radius: clamp(16px, 4vw, 22px);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 0 1px rgba(37,99,235,0.08), 0 0 60px rgba(37,99,235,0.2);
+            width: 100%; max-width: 420px;
+            padding: clamp(20px, 5vw, 32px);
+            max-height: 92dvh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .main-card::-webkit-scrollbar { width: 4px; }
+        .main-card::-webkit-scrollbar-track { background: transparent; }
+        .main-card::-webkit-scrollbar-thumb { background: rgba(37,99,235,0.4); border-radius: 4px; }
 
-        showStatus(
-            error.message ||
-            "Erreur de connexion au serveur.",
-            true
-        );
+        .hidden { display: none !important; }
 
+        /* ── HEADER (login + main) ── */
+        .header { text-align: center; margin-bottom: 24px; }
+        
+        /* Modificado: Apenas a imagem redonda, sem borda e sem fundo */
+        .logo {
+            width: clamp(72px, 20vw, 92px);
+            height: clamp(72px, 20vw, 92px);
+            border-radius: 50%; margin: 0 auto 12px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; /* Corta a imagem no formato de círculo */
+        }
+        .logo img { 
+            width: 100%; height: 100%; 
+            object-fit: cover; display: block; 
+        }
+        
+        .app-title {
+            font-size: clamp(20px, 5vw, 26px);
+            font-weight: 800; letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 4px;
+        }
+        .app-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+        .copyright { font-size: 10px; color: var(--dim); font-weight: 700; letter-spacing: 1px; }
+
+        /* ── LOGIN FORM ── */
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; font-size: 12px; color: #d1d5db; margin-bottom: 7px; font-weight: 600; letter-spacing: 0.3px; }
+        .form-input {
+            width: 100%; padding: 13px 15px;
+            background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(37,99,235,0.35);
+            border-radius: 12px; color: #fff;
+            font-size: 15px; transition: all 0.25s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        .form-input::placeholder { color: var(--dim); }
+        .form-input:focus {
+            outline: none; border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.18);
+            background: rgba(0,0,0,0.7);
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            width: 100%; padding: 14px 20px; border: none;
+            border-radius: 12px; font-size: 14px; font-weight: 800;
+            cursor: pointer; letter-spacing: 1px; text-transform: uppercase;
+            text-decoration: none; display: flex; align-items: center;
+            justify-content: center; gap: 8px; transition: all 0.25s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue), #3b82f6);
+            color: #fff; box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+            margin-top: 4px;
+        }
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #fff; box-shadow: 0 6px 20px rgba(37,211,102,0.3);
+            margin-top: 12px;
+        }
+        .btn-inject {
+            background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+            color: #fff; box-shadow: 0 8px 24px rgba(37,99,235,0.45);
+            margin-top: 20px; font-size: 15px; padding: 15px 20px;
+            border-radius: 14px;
+        }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ── INFO BOX ── */
+        .info-box {
+            background: rgba(37,99,235,0.08);
+            border: 1px solid rgba(37,99,235,0.28);
+            border-radius: 12px; padding: 15px;
+            margin-top: 18px; text-align: center;
+        }
+        .info-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .info-value { font-size: 15px; font-weight: 700; color: var(--blue-light); }
+        .info-subtext { font-size: 11px; color: var(--dim); margin-top: 4px; }
+
+        /* ── TABS ── */
+        .tabs {
+            display: flex; gap: 6px;
+            background: rgba(0,0,0,0.45);
+            border: 1px solid rgba(37,99,235,0.18);
+            border-radius: 14px; padding: 5px;
+            margin-bottom: 18px;
+        }
+        .tab {
+            flex: 1; padding: 10px 4px; border: none;
+            background: transparent; color: var(--dim);
+            border-radius: 10px; cursor: pointer;
+            font-size: clamp(9px, 2.5vw, 11px);
+            font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            transition: all 0.25s; -webkit-tap-highlight-color: transparent;
+        }
+        .tab svg { width: 18px; height: 18px; transition: color 0.25s; }
+        .tab.active {
+            background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+        }
+        .tab-content { display: none; animation: fadeUp 0.25s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── SECTION TITLE ── */
+        .section-title {
+            font-size: 10px; font-weight: 800; color: var(--dim);
+            text-transform: uppercase; letter-spacing: 2px;
+            margin: 0 0 12px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .section-title::after {
+            content: ''; flex: 1; height: 1px;
+            background: rgba(255,255,255,0.07);
+        }
+
+        /* ── FEATURE ITEMS ── */
+        .feature-item {
+            background: var(--item-bg);
+            border: 1px solid var(--item-border);
+            border-radius: 12px;
+            padding: clamp(10px, 3vw, 14px);
+            margin-bottom: 10px;
+            display: flex; align-items: center;
+            gap: clamp(10px, 3vw, 14px);
+            transition: border-color 0.25s;
+            width: 100%;
+            height: 85px; 
+            box-sizing: border-box;
+        }
+        .feature-item:last-child { margin-bottom: 0; }
+        .feature-icon-wrap {
+            width: 38px; height: 38px; flex-shrink: 0;
+            border-radius: 9px;
+            background: rgba(37,99,235,0.15);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .feature-icon-wrap svg { width: 18px; height: 18px; color: var(--blue-light); }
+        .feature-info { flex: 1; min-width: 0; }
+        .feature-title {
+            font-size: clamp(11px, 3vw, 13px); font-weight: 700;
+            color: var(--text); text-transform: uppercase;
+            letter-spacing: 0.4px; margin-bottom: 3px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .feature-desc { 
+            font-size: clamp(10px, 2.5vw, 12px); color: var(--muted); line-height: 1.35;
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── TOGGLE ── */
+        .toggle {
+            position: relative; width: 48px; height: 28px; flex-shrink: 0;
+            background: #374151; border-radius: 14px; cursor: pointer;
+            transition: background 0.3s; -webkit-tap-highlight-color: transparent;
+        }
+        .toggle.active { background: linear-gradient(135deg, var(--blue), #3b82f6); }
+        .toggle-thumb {
+            position: absolute; top: 3px; left: 3px;
+            width: 22px; height: 22px;
+            background: #fff; border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+        }
+        .toggle.active .toggle-thumb { transform: translateX(20px); }
+
+        /* ── ACCOUNT TAB ── */
+        .logout-link {
+            display: block; text-align: center; margin-top: 20px;
+            color: var(--dim); font-size: 13px; text-decoration: none;
+            transition: color 0.25s; cursor: pointer;
+        }
+        .logout-link:hover { color: var(--blue-light); }
+    </style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="animated-bg">
+    <canvas id="neuralCanvas"></canvas>
+    <div class="neural-title">sielzada</div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">
+    <div class="toast-icon" id="toastIcon"></div>
+    <div class="toast-msg" id="toastMsg"></div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+    <div class="loader-logo" id="loaderLogo">
+        <!-- Imagem carregando diretamente -->
+        <img src="vggccf/images/logo.png" alt="Sielzada Logo">
+    </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="container hidden">
+    <div class="main-card">
+        <div class="header">
+            <div class="logo" id="loginLogo">
+                <!-- Imagem carregando diretamente -->
+                <img src="vggccf/images/logo.png" alt="Sielzada Logo">
+            </div>
+            <h1 class="app-title">sielzada</h1>
+            <p class="app-subtitle">Valide sua key para continuar</p>
+            <p class="copyright">copyright : sielzada</p>
+        </div>
+
+        <form id="loginForm" autocomplete="off">
+            <div class="form-group">
+                <label for="keyInput" class="form-label">Sua Key</label>
+                <input type="text" id="keyInput" class="form-input" placeholder="Cole sua key aqui" autocomplete="off" spellcheck="false">
+            </div>
+            <button type="submit" id="loginBtn" class="btn btn-primary">Validar Key</button>
+        </form>
+
+        <a href="https://discord.gg/KEGQjmzu3H" target="_blank" class="btn btn-whatsapp">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.031.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            Comprar Key
+        </a>
+
+        <div id="keyInfoLogin" class="info-box hidden">
+            <div class="info-label">Válido até</div>
+            <div id="validUntilLogin" class="info-value"></div>
+            <div id="timeLeftLogin" class="info-subtext"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="container hidden">
+    <div class="main-card">
+
+        <!-- Header dentro do app -->
+        <div class="header" style="margin-bottom:18px;">
+            <div class="logo" id="appLogo">
+                <!-- Imagem carregando diretamente -->
+                <img src="vggccf/images/logo.png" alt="Sielzada Logo">
+            </div>
+            <h1 class="app-title">sielzada</h1>
+            <p class="copyright">copyright : sielzada</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" role="tablist">
+            <button class="tab active" data-tab="features" role="tab" aria-selected="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Funções
+            </button>
+            <button class="tab" data-tab="optimization" role="tab" aria-selected="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Otimização
+            </button>
+            <button class="tab" data-tab="account" role="tab" aria-selected="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Conta
+            </button>
+        </div>
+
+        <!-- Funções -->
+        <div id="features" class="tab-content active">
+            <div class="section-title">Combate</div>
+            <div id="featuresList"></div>
+        </div>
+
+        <!-- Otimização -->
+        <div id="optimization" class="tab-content">
+            <div class="section-title">Sistema</div>
+            <div id="optimizationList"></div>
+        </div>
+
+        <!-- Conta -->
+        <div id="account" class="tab-content">
+            <div class="section-title">Informações</div>
+            <div class="info-box">
+                <div class="info-label">Expira em</div>
+                <div id="expirationDate" class="info-value">Carregando...</div>
+                <div id="daysLeft" class="info-subtext">Verificando...</div>
+            </div>
+            <a class="logout-link" onclick="logout()">Sair da conta</a>
+        </div>
+
+        <button class="btn btn-inject" id="injectBtn">ATIVAR NO JOGO</button>
+    </div>
+</div>
+
+<script>
+// ── CANVAS NEURAL ──
+const canvas = document.getElementById('neuralCanvas');
+const ctx = canvas.getContext('2d');
+function resizeCanvas() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const PARTICLES = Array.from({length: 70}, () => ({
+    x: Math.random() * innerWidth,
+    y: Math.random() * innerHeight,
+    vx: (Math.random() - 0.5) * 0.45,
+    vy: (Math.random() - 0.5) * 0.45,
+    r: Math.random() * 1.8 + 0.8
+}));
+
+function drawNeural() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    PARTICLES.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(37,99,235,0.7)';
+        ctx.fill();
+    });
+    for (let i = 0; i < PARTICLES.length; i++) {
+        for (let j = i + 1; j < PARTICLES.length; j++) {
+            const dx = PARTICLES[i].x - PARTICLES[j].x;
+            const dy = PARTICLES[i].y - PARTICLES[j].y;
+            const d = Math.sqrt(dx*dx + dy*dy);
+            if (d < 140) {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(37,99,235,${(1 - d/140) * 0.25})`;
+                ctx.lineWidth = 1;
+                ctx.moveTo(PARTICLES[i].x, PARTICLES[i].y);
+                ctx.lineTo(PARTICLES[j].x, PARTICLES[j].y);
+                ctx.stroke();
+            }
+        }
     }
+    requestAnimationFrame(drawNeural);
+}
+drawNeural();
 
-};
+// ── TOAST ──
+let toastTimer;
+function showToast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    const icon = document.getElementById('toastIcon');
+    const text = document.getElementById('toastMsg');
+    el.className = type;
+    icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✕' : '↻';
+    text.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    if (type !== 'loading') toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
 
+// ── FEATURES DATA ──
+const FEATURES = [
+    { id: 0, cat: 'features', title: 'Precisão em 90%', desc: 'Aumenta a precisão do seu celular deixando completamente estável.',
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/><circle cx="12" cy="12" r="4"/></svg>` },
+    { id: 1, cat: 'features', title: 'Reduzir Recoil', desc: 'Diminui o recuo de armas ar e smg deixando os tiros muito mais retos.',
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>` },
+        { id: 4, cat: 'features', title: 'Mira Responsiva', desc: 'Melhora a resposta da tela deixando a mira mais precisa.',
+            svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="3" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="21" y2="12"/></svg>` },
+    { id: 2, cat: 'optimization', title: 'Remover Lags', desc: 'Zera o atraso de resposta do toque deixando a tela muito mais rápida.',
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>` },
+    { id: 3, cat: 'optimization', title: 'Travar 60 FPS', desc: 'Força seu dispositivo a ficar estável a 60FPS sem nenhum tipo de queda.',
+            svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><polyline points="4 10 8 10 10 6 14 14 16 10 20 10"/></svg>` },
+        { id: 5, cat: 'optimization', title: 'Modo Desempenho', desc: 'Otimiza o sistema para maior desempenho no jogo.',
+            svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6"/><path d="M6.34 6.34l4.24 4.24"/><path d="M3 12h6"/><path d="M6.34 17.66l4.24-4.24"/><path d="M12 21v-6"/><path d="M17.66 17.66l-4.24-4.24"/><path d="M21 12h-6"/><path d="M17.66 6.34l-4.24 4.24"/></svg>` }
+];
+const states = new Array(FEATURES.length).fill(false);
 
-/* =========================
-   MODE DEMO
-========================= */
+function buildFeatures() {
+    let fHTML = '', oHTML = '';
+    FEATURES.forEach((f) => {
+        const html = `
+        <div class="feature-item">
+            <div class="feature-icon-wrap">${f.svg}</div>
+            <div class="feature-info">
+                <div class="feature-title">${f.title}</div>
+                <div class="feature-desc">${f.desc}</div>
+            </div>
+            <div class="toggle ${states[f.id] ? 'active' : ''}" data-id="${f.id}" role="switch" aria-checked="${states[f.id]}">
+                <div class="toggle-thumb"></div>
+            </div>
+        </div>`;
+        if (f.cat === 'features') fHTML += html;
+        else oHTML += html;
+    });
+    document.getElementById('featuresList').innerHTML = fHTML;
+    document.getElementById('optimizationList').innerHTML = oHTML;
 
-$("demo")
-.onclick =
-function(){
+    document.querySelectorAll('.toggle').forEach(t => {
+        t.addEventListener('click', function() {
+            const id = parseInt(this.dataset.id);
+            states[id] = !states[id];
+            this.classList.toggle('active');
+            this.setAttribute('aria-checked', states[id]);
+            showToast(states[id] ? `${FEATURES[id].title} ativada!` : `${FEATURES[id].title} desativada!`);
+        });
+    });
+}
 
-    $("home")
-        .value =
-        "Real Madrid";
+// ── TABS ──
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        const target = this.dataset.tab;
+        document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        this.setAttribute('aria-selected','true');
+        document.getElementById(target).classList.add('active');
+    });
+});
 
+// ── INJECT ──
+document.getElementById('injectBtn').addEventListener('click', function() {
+    const active = states.filter(Boolean).length;
+    if (!active) return showToast('Ative pelo menos uma função!', 'error');
 
-    $("away")
-        .value =
-        "Barcelona";
+    this.disabled = true;
+    this.textContent = 'ATIVANDO...';
+    document.querySelectorAll('.toggle').forEach(t => { t.style.pointerEvents = 'none'; t.style.opacity = '0.5'; });
+    showToast('Iniciando ativação...', 'loading');
 
+    setTimeout(() => {
+        showToast('Ativação concluída!', 'success');
+        this.disabled = false;
+        this.textContent = 'ABRIR FREE FIRE';
+        document.querySelectorAll('.toggle').forEach(t => { t.style.pointerEvents = ''; t.style.opacity = ''; });
 
-    const tomorrow =
-        new Date();
+        setTimeout(() => {
+            showToast('Abrindo Free Fire...', 'loading');
+            setTimeout(() => { window.location.href = 'freefireth://'; }, 1000);
+        }, 600);
+    }, 3000);
+});
 
+// ── KEY VALIDATION ──
+let currentKey = null;
+let countdownTimer = null;
 
-    tomorrow.setDate(
-        tomorrow.getDate()+1
-    );
+const AUTH_TOKEN_STORAGE = 'sielzada_auth_token';
+const HWID_STORAGE = 'sielzada_hwid';
 
+function getBrowserHwid() {
+    let hwid = localStorage.getItem(HWID_STORAGE);
+    if (!hwid) {
+        hwid = typeof crypto !== 'undefined' && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `web-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+        localStorage.setItem(HWID_STORAGE, hwid);
+    }
+    return hwid;
+}
 
-    $("date")
-        .value =
-        tomorrow
-        .toISOString()
-        .slice(0,10);
+function normalizeApiError(message) {
+    const raw = String(message || '').toLowerCase();
+    if (!raw) return 'Falha na validacao da key';
+    if (raw.includes('invalid license key')) return 'Key invalida';
+    if (raw.includes('license is banned')) return 'Essa key foi banida';
+    if (raw.includes('hwid mismatch')) return 'Key em uso em outro dispositivo';
+    if (raw.includes('expired')) return 'Key expirada';
+    if (raw.includes('rate limit')) return 'Muitas tentativas, aguarde e tente novamente';
+    return message;
+}
 
-
-    /*
-       Démonstration visuelle.
-       Aucun faux résultat n'est envoyé
-       comme une vraie prédiction.
-    */
-
-    render({
-
-        home:"Real Madrid",
-
-        away:"Barcelona",
-
-        homeLogo:
-        "https://media.api-sports.io/football/teams/541.png",
-
-        awayLogo:
-        "https://media.api-sports.io/football/teams/529.png",
-
-        scoreHome:2,
-
-        scoreAway:1,
-
-        winner:"Real Madrid",
-
-        probabilities:{
-
-            home:52,
-
-            draw:25,
-
-            away:23
-
+async function apiRequest(path, options = {}) {
+    const response = await fetch(path, {
+        headers: {
+            'Content-Type': 'application/json',
+            ...(options.headers || {})
         },
-
-        formHome:"WWDWW",
-
-        formAway:"WDWDL",
-
-        advice:"Real Madrid favori",
-
-        confidence:"52%"
-
+        ...options
     });
 
+    let data = {};
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error('Resposta invalida do servidor');
+    }
 
-    showStatus(
-        "🧪 Exemple chargé. Ceci est une démonstration."
-    );
+    if (!response.ok || !data.success) {
+        throw new Error(normalizeApiError(data.message || 'Falha na autenticacao'));
+    }
 
-};
+    return data;
+}
 
+function normalizeExpiry(value) {
+    if (!value) return null;
+
+    const numeric = Number(value);
+    if (Number.isFinite(numeric) && numeric > 0) {
+        const ms = numeric > 1000000000000 ? numeric : numeric * 1000;
+        const date = new Date(ms);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function completeLogin(code, data) {
+    const expiry = normalizeExpiry(data.expiresAt);
+    currentKey = { key: code, expiry };
+    localStorage.setItem('sielzada_key', code);
+    if (data.token) {
+        localStorage.setItem(AUTH_TOKEN_STORAGE, data.token);
+    }
+
+    if (expiry) {
+        showKeyInfo(expiry);
+    } else {
+        document.getElementById('keyInfoLogin').classList.add('hidden');
+    }
+
+    showToast('Acesso liberado!', 'success');
+    setTimeout(openApp, 1400);
+}
+
+async function validateKey(code) {
+    try {
+        showToast('Validando chave...', 'loading');
+        const data = await apiRequest('/api/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                key: code,
+                hwid: getBrowserHwid()
+            })
+        });
+
+        completeLogin(code, data);
+    } catch(e) {
+        const msg = e instanceof TypeError
+            ? 'Servidor offline. Abra pelo servidor local para validar key.'
+            : normalizeApiError(e.message);
+        showToast(msg, 'error');
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = false; btn.textContent = 'Validar Key';
+    }
+}
+
+async function restoreSession() {
+    const token = localStorage.getItem(AUTH_TOKEN_STORAGE);
+    if (!token) return false;
+
+    try {
+        const data = await apiRequest('/api/auth/session', {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const savedKey = localStorage.getItem('sielzada_key') || 'sessao';
+        completeLogin(savedKey, data);
+        return true;
+    } catch {
+        localStorage.removeItem(AUTH_TOKEN_STORAGE);
+        return false;
+    }
+}
+
+function showKeyInfo(expiry) {
+    const box   = document.getElementById('keyInfoLogin');
+    const until = document.getElementById('validUntilLogin');
+    const left  = document.getElementById('timeLeftLogin');
+    box.classList.remove('hidden');
+    until.textContent = expiry.toLocaleDateString('pt-BR') + ' às ' + expiry.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    tick(expiry, left);
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(() => tick(expiry, left), 1000);
+}
+
+function tick(expiry, el) {
+    const diff = expiry - Date.now();
+    if (diff <= 0) { el.textContent = 'Expirada'; el.style.color = '#ef4444'; setTimeout(logout, 2000); return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    el.textContent = `${d}d ${h}h ${m}m ${s}s restantes`;
+}
+
+function openApp() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+    buildFeatures();
+    updateExpiration();
+}
+
+function updateExpiration() {
+    if (!currentKey) return;
+    const expiry = currentKey.expiry;
+    const dateEl = document.getElementById('expirationDate');
+    const daysEl = document.getElementById('daysLeft');
+    if (expiry && !isNaN(expiry)) {
+        dateEl.textContent = expiry.toLocaleDateString('pt-BR') + ' às ' + expiry.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+        const diff = expiry - Date.now();
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        daysEl.textContent = `${d} dias e ${h} horas restantes`;
+    } else {
+        dateEl.textContent = '—'; daysEl.textContent = 'Sem expiração definida';
+    }
+}
+
+function logout() {
+    localStorage.removeItem('sielzada_key');
+    localStorage.removeItem(AUTH_TOKEN_STORAGE);
+    if (countdownTimer) clearInterval(countdownTimer);
+    currentKey = null;
+    showToast('Sessão encerrada', 'error');
+    setTimeout(() => location.reload(), 1000);
+}
+
+// ── LOGIN FORM ──
+document.getElementById('loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const key = document.getElementById('keyInput').value.trim();
+    if (!key) return showToast('Digite uma key', 'error');
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true; btn.textContent = 'Validando...';
+    validateKey(key);
+});
+
+// ── INIT ──
+setTimeout(() => {
+    const ls = document.getElementById('loadingScreen');
+    ls.classList.add('fade-out');
+    setTimeout(() => ls.style.display = 'none', 500);
+    document.getElementById('loginScreen').classList.remove('hidden');
+
+    restoreSession().then((restored) => {
+        if (restored) return;
+        const saved = localStorage.getItem('sielzada_key');
+        if (saved) {
+            document.getElementById('keyInput').value = saved;
+        }
+    });
+}, 2200);
+
+// ── PWA ──
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js?v=6').catch(() => {});
+    });
+}
 </script>
-
 </body>
 </html>
